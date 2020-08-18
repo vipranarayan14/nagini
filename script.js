@@ -1,4 +1,5 @@
 import { toBlocks } from "./utils.js";
+
 import { Gameboard } from "./Gameboard.js";
 import { Scoreboard } from "./Scoreboard.js";
 import { Snake } from "./Snake.js";
@@ -33,20 +34,29 @@ const advanceSnake = () => {
   }
 };
 
-const changeDirection = ({ keyCode: pressedKey }) => {
-  const LEFT_KEY = 37;
-  const RIGHT_KEY = 39;
+const changeDirection = (event, swipeDir) => {
+  event.preventDefault();
+
   const UP_KEY = 38;
   const DOWN_KEY = 40;
+  const LEFT_KEY = 37;
+  const RIGHT_KEY = 39;
 
-  if (pressedKey === UP_KEY && !snake.isGoingDown) {
+  const { keyCode: pressedKey } = event;
+
+  const goUp = pressedKey === UP_KEY || swipeDir === "up";
+  const goDown = pressedKey === DOWN_KEY || swipeDir === "down";
+  const goLeft = pressedKey === LEFT_KEY || swipeDir === "left";
+  const goRight = pressedKey === RIGHT_KEY || swipeDir === "right";
+
+  if (goUp && !snake.isGoingDown) {
     snake.turnUp();
-  } else if (pressedKey === DOWN_KEY && !snake.isGoingUp) {
+  } else if (goDown && !snake.isGoingUp) {
     snake.turnDown();
-  } else if (pressedKey === RIGHT_KEY && !snake.isGoingLeft) {
-    snake.turnRight();
-  } else if (pressedKey === LEFT_KEY && !snake.isGoingRight) {
+  } else if (goLeft && !snake.isGoingRight) {
     snake.turnLeft();
+  } else if (goRight && !snake.isGoingLeft) {
+    snake.turnRight();
   }
 };
 
@@ -59,9 +69,13 @@ const draw = () => {
   advanceSnake();
 };
 
-document.addEventListener("keydown", changeDirection);
-
 food.create(snake);
 draw();
 
 game.start(draw);
+
+document.addEventListener("swipeup", (e) => changeDirection(e, "up"));
+document.addEventListener("swipedown", (e) => changeDirection(e, "down"));
+document.addEventListener("swipeleft", (e) => changeDirection(e, "left"));
+document.addEventListener("swiperight", (e) => changeDirection(e, "right"));
+document.addEventListener("keydown", changeDirection);
