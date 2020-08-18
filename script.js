@@ -1,46 +1,88 @@
-const CANVAS_FILL_COLOR = "#3c3c3c";
-const CANVAS_BORDER_COLOR = CANVAS_FILL_COLOR;
-const SNAKE_FILL_COLOR = "green";
-const SNAKE_BORDER_COLOR = "darkgreen";
-const FOOD_FILL_COLOR = "red";
+const GAMEBOARD_FILL_COLOR = "#4c4c4c";
+const GAMEBOARD_BORDER_COLOR = GAMEBOARD_FILL_COLOR;
+const SCOREBOARD_FILL_COLOR = "#222222";
+const SCOREBOARD_BORDER_COLOR = SCOREBOARD_FILL_COLOR;
+const SNAKE_FILL_COLOR = "#00a000";
+const SNAKE_BORDER_COLOR = SNAKE_FILL_COLOR; // "darkgreen";
+const FOOD_FILL_COLOR = "#ff5500";
 const FOOD_BORDER_COLOR = FOOD_FILL_COLOR;
 
+const BLOCK_SIZE = 40;
+const SCORE_INCREMENT = 10;
+
+const toBlocks = (num) => Math.floor(num / BLOCK_SIZE) * BLOCK_SIZE;
+
 const canvas = document.getElementById("game-canvas");
+canvas.height = toBlocks(window.innerHeight * 0.9);
+canvas.width = toBlocks(window.innerWidth * 0.9);
+
 const ctx = canvas.getContext("2d");
 
 const canvasHeight = canvas.height;
 const canvasWidth = canvas.width;
 
-let dx = 20,
+const scoreBoard = {
+  x: 0,
+  y: 0,
+  height: BLOCK_SIZE * 2,
+  width: canvasWidth,
+};
+
+const gameBoard = {
+  x: 0,
+  y: scoreBoard.height,
+  height: canvasHeight,
+  width: canvasWidth,
+};
+
+gameBoard.middle = toBlocks((gameBoard.height - gameBoard.y) / 2);
+
+let score = 0;
+
+let dx = BLOCK_SIZE,
   dy = 0;
 
 let foodX = 0,
   foodY = 0;
 
 let snakeParts = [
-  { x: 40, y: canvasHeight / 2 },
-  { x: 20, y: canvasHeight / 2 },
-  { x: 0, y: canvasHeight / 2 },
+  { x: BLOCK_SIZE * 2, y: gameBoard.middle },
+  { x: BLOCK_SIZE * 1, y: gameBoard.middle },
+  { x: BLOCK_SIZE * 0, y: gameBoard.middle },
 ];
 
-const clearCanvas = () => {
-  ctx.fillStyle = CANVAS_FILL_COLOR;
-  ctx.strokeStyle = CANVAS_BORDER_COLOR;
-  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-  ctx.strokeRect(0, 0, canvasWidth, canvasHeight);
+const drawScoreBoard = () => {
+  ctx.fillStyle = SCOREBOARD_FILL_COLOR;
+  ctx.strokeStyle = SCOREBOARD_BORDER_COLOR;
+  ctx.fillRect(scoreBoard.x, scoreBoard.y, scoreBoard.width, scoreBoard.height);
+  ctx.strokeRect(
+    scoreBoard.x,
+    scoreBoard.y,
+    scoreBoard.width,
+    scoreBoard.height
+  );
+};
+
+const drawGameBoard = () => {
+  ctx.fillStyle = GAMEBOARD_FILL_COLOR;
+  ctx.strokeStyle = GAMEBOARD_BORDER_COLOR;
+  ctx.fillRect(gameBoard.x, gameBoard.y, gameBoard.width, gameBoard.height);
+  ctx.strokeRect(gameBoard.x, gameBoard.y, gameBoard.width, gameBoard.height);
 };
 
 const getRandomCoord = (min, max) =>
-  Math.round((Math.random() * (max - min) + min) / 20) * 20;
+  toBlocks(Math.random() * (max - min) + min);
 
 const isFoodOnSnake = (foodX, foodY) =>
   snakeParts.some(({ x, y }) => foodX === x && foodY === y);
 
 const didEatFood = () => snakeParts[0].x === foodX && snakeParts[0].y === foodY;
 
+const increaseScore = () => (score += SCORE_INCREMENT);
+
 const createFood = () => {
-  foodX = getRandomCoord(0, canvasWidth);
-  foodY = getRandomCoord(0, canvasHeight);
+  foodX = getRandomCoord(gameBoard.x, gameBoard.width);
+  foodY = getRandomCoord(gameBoard.y, gameBoard.height);
 
   if (isFoodOnSnake(foodX, foodY)) {
     createFood();
@@ -50,8 +92,8 @@ const createFood = () => {
 const drawSnakePart = ({ x, y }) => {
   ctx.fillStyle = SNAKE_FILL_COLOR;
   ctx.strokeStyle = SNAKE_BORDER_COLOR;
-  ctx.fillRect(x, y, 20, 20);
-  ctx.strokeRect(x, y, 20, 20);
+  ctx.fillRect(x, y, BLOCK_SIZE, BLOCK_SIZE);
+  ctx.strokeRect(x, y, BLOCK_SIZE, BLOCK_SIZE);
 };
 
 const drawSnake = () => snakeParts.forEach(drawSnakePart);
@@ -60,16 +102,17 @@ const drawFood = () => {
   ctx.fillStyle = FOOD_FILL_COLOR;
   ctx.strokeStyle = FOOD_BORDER_COLOR;
 
-  ctx.fillRect(foodX, foodY, 20, 20);
-  ctx.strokeRect(foodX, foodY, 20, 20);
+  ctx.fillRect(foodX, foodY, BLOCK_SIZE, BLOCK_SIZE);
+  ctx.strokeRect(foodX, foodY, BLOCK_SIZE, BLOCK_SIZE);
 };
 
 const advanceSnake = () => {
   let x = snakeParts[0].x + dx;
   let y = snakeParts[0].y + dy;
 
-  x = x > canvasWidth ? 0 : x < 0 ? canvasWidth : x;
-  y = y > canvasHeight ? 0 : y < 0 ? canvasHeight : y;
+  x = x > gameBoard.width ? gameBoard.x : x < gameBoard.x ? gameBoard.width : x;
+  y =
+    y > gameBoard.height ? gameBoard.y : y < gameBoard.y ? gameBoard.height : y;
 
   snakeParts = [{ x, y }].concat(snakeParts);
 
@@ -86,41 +129,43 @@ const changeDirection = ({ keyCode: pressedKey }) => {
   const UP_KEY = 38;
   const DOWN_KEY = 40;
 
-  const isGoingUp = dy === -20;
-  const isGoingDown = dy === 20;
-  const isGoingRight = dx === 20;
-  const isGoingLeft = dx === -20;
+  const isGoingUp = dy === -BLOCK_SIZE;
+  const isGoingDown = dy === BLOCK_SIZE;
+  const isGoingRight = dx === BLOCK_SIZE;
+  const isGoingLeft = dx === -BLOCK_SIZE;
 
   if (pressedKey === UP_KEY && !isGoingDown) {
-    dy = -20;
+    dy = -BLOCK_SIZE;
     dx = 0;
   } else if (pressedKey === DOWN_KEY && !isGoingUp) {
-    dy = 20;
+    dy = BLOCK_SIZE;
     dx = 0;
   } else if (pressedKey === LEFT_KEY && !isGoingRight) {
     dy = 0;
-    dx = -20;
+    dx = -BLOCK_SIZE;
   } else if (pressedKey === RIGHT_KEY && !isGoingLeft) {
     dy = 0;
-    dx = 20;
+    dx = BLOCK_SIZE;
   }
 };
 
-// const drawGrid = () => {
-//   ctx.strokeStyle = "white";
+const drawGrid = () => {
+  ctx.strokeStyle = "white";
 
-//   for (let x = 0; x < canvasWidth; x += 20) {
-//     for (let y = 0; y < canvasHeight; y += 20) {
-//       ctx.strokeRect(x, y, 20, 20);
-//     }
-//   }
-// };
+  for (let x = 0; x < canvasWidth; x += BLOCK_SIZE) {
+    for (let y = 0; y < canvasHeight; y += BLOCK_SIZE) {
+      ctx.strokeRect(x, y, BLOCK_SIZE, BLOCK_SIZE);
+    }
+  }
+};
 
 let gameInterval;
 
 const startGame = () => {
   gameInterval = setInterval(() => {
-    clearCanvas();
+    drawScoreBoard();
+    drawGameBoard();
+    // drawGrid();
     drawFood();
     advanceSnake();
     drawSnake();
@@ -143,9 +188,9 @@ const toggleGameState = (e) => {
 };
 
 document.addEventListener("keydown", changeDirection);
-document.getElementById("pause-btn").addEventListener("click", toggleGameState);
+// document.getElementById("pause-btn").addEventListener("click", toggleGameState);
 
 startGame();
 createFood();
-clearCanvas();
+drawGameBoard();
 drawSnake();
