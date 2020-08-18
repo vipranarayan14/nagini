@@ -62,6 +62,7 @@ const changeDirection = (event, swipeDir) => {
 
 const draw = () => {
   scoreboard.draw(ctx);
+  scoreboard.drawScore(ctx);
   gameboard.draw(ctx);
   // grid.draw();
   food.draw(ctx);
@@ -73,6 +74,8 @@ food.create(snake);
 draw();
 
 game.start(draw);
+
+window.tocca({ swipeThreshold: 30 });
 
 document.addEventListener("swipeup", (e) => changeDirection(e, "up"));
 document.addEventListener("swipedown", (e) => changeDirection(e, "down"));
