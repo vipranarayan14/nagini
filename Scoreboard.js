@@ -20,4 +20,10 @@ export class Scoreboard {
   }
 
   addScore = () => (this.score += config.SCORE_INCREMENT);
+
+  drawScore(ctx) {
+    ctx.fillStyle = "white";
+    ctx.font = "50px Arial";
+    ctx.fillText(this.score.toString(), this.x + 30, 58);
+  }
 }
