@@ -4,7 +4,7 @@ import { createControlButtons } from "./ControlButton.js";
 const toggleCanvasFullscreen = (canvas) =>
   document.fullscreenElement
     ? document.exitFullscreen()
-    : canvas.requestFullscreen();
+    : document.documentElement.requestFullscreen();
 
 export class Controls extends Board {
   constructor(canvas, game) {
