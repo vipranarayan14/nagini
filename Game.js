@@ -26,7 +26,7 @@ export class Game {
       if (!canReset()) return;
       this.resetInterval();
       reset();
-      this.draw();
+      this.start();
     };
   }
 
@@ -45,7 +45,7 @@ export class Game {
 
   end() {
     window.alert("Game Over!\nClick 'Ok' to start new game.");
-    window.location.reload();
+    this.reset();
   }
 
   togglePause() {
