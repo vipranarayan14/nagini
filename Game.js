@@ -15,9 +15,9 @@ export class Game {
     this._gameInterval = 0;
   }
 
-  init(draw, gameSpeed) {
+  init(draw, speed) {
     this.draw = draw;
-    this.gameSpeed = gameSpeed;
+    this.speed = speed;
     this.draw();
   }
 
@@ -31,11 +31,16 @@ export class Game {
   }
 
   start() {
-    this._gameInterval = setInterval(this.draw, this.gameSpeed);
+    this._gameInterval = setInterval(this.draw, this.speed);
   }
 
   pause() {
     this.resetInterval();
+  }
+
+  restart() {
+    this.pause();
+    this.start();
   }
 
   togglePause() {
@@ -46,5 +51,10 @@ export class Game {
     } else {
       this.start();
     }
+  }
+
+  setSpeed(speed) {
+    this.speed = speed;
+    this.restart();
   }
 }
