@@ -19,7 +19,7 @@ export class Snake extends Block {
       { x: config.BLOCK_SIZE * 0, y: this._gameboard.middle },
     ];
 
-    this._parts = this._initialParts;
+    this._parts = this._initialParts.slice(0);
 
     this.hitSelf = false;
   }
@@ -33,7 +33,10 @@ export class Snake extends Block {
   }
 
   reset() {
-    this._parts = this._initialParts;
+    this._parts = this._initialParts.slice(0);
+    this.hitSelf = false;
+    this._dx = config.BLOCK_SIZE;
+    this._dy = 0;
   }
 
   get isGoingUp() {
