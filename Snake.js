@@ -20,6 +20,8 @@ export class Snake extends Block {
     ];
 
     this._parts = this._initialParts;
+
+    this.hitSelf = false;
   }
 
   draw(ctx) {
@@ -47,6 +49,13 @@ export class Snake extends Block {
     return this._dx === config.BLOCK_SIZE;
   }
 
+  didHitSelf = () =>
+    this._parts
+      .slice(1)
+      .some(
+        (part) => part.x === this._parts[0].x && part.y === this._parts[0].y
+      );
+
   advance() {
     let x = this._parts[0].x + this._dx;
     let y = this._parts[0].y + this._dy;
@@ -63,6 +72,10 @@ export class Snake extends Block {
         : y < this._gameboard.y
         ? this._gameboard.height
         : y;
+
+    if (this.didHitSelf()) {
+      this.hitSelf = true;
+    }
 
     this._parts = [{ x, y }].concat(this._parts);
   }
