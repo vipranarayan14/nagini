@@ -1,8 +1,10 @@
+import { Block } from "./Block.js";
 import * as config from "./config.js";
 
-export class Snake {
+export class Snake extends Block {
   constructor(gameboard) {
-    this.height = this.width = config.BLOCK_SIZE;
+    super();
+
     this.fillColor = config.SNAKE_FILL_COLOR;
     this.borderColor = config.SNAKE_BORDER_COLOR;
 
@@ -12,18 +14,17 @@ export class Snake {
     this._dy = 0;
 
     this._parts = [
-      { x: config.BLOCK_SIZE * 2, y: this._gameboard.middle() },
-      { x: config.BLOCK_SIZE * 1, y: this._gameboard.middle() },
-      { x: config.BLOCK_SIZE * 0, y: this._gameboard.middle() },
+      { x: config.BLOCK_SIZE * 2, y: this._gameboard.middle },
+      { x: config.BLOCK_SIZE * 1, y: this._gameboard.middle },
+      { x: config.BLOCK_SIZE * 0, y: this._gameboard.middle },
     ];
   }
 
   draw(ctx) {
     this._parts.forEach(({ x, y }) => {
-      ctx.fillStyle = this.fillColor;
-      ctx.strokeStyle = this.borderColor;
-      ctx.fillRect(x, y, this.width, this.height);
-      ctx.strokeRect(x, y, this.width, this.height);
+      this.x = x;
+      this.y = y;
+      super.draw(ctx);
     });
   }
 
