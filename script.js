@@ -29,6 +29,10 @@ const advanceSnake = snakeCore.initAdvance(snake, food, scoreboard);
 const changeSnakeDirection = snakeCore.initChangeDirection(snake);
 
 const draw = () => {
+  if (snake.hitSelf) {
+    game.end();
+  }
+
   scoreboard.draw(ctx);
   controls.draw(ctx);
   gameboard.draw(ctx);

@@ -43,6 +43,11 @@ export class Game {
     this.start();
   }
 
+  end() {
+    window.alert("Game Over!\nClick 'Ok' to start new game.");
+    window.location.reload();
+  }
+
   togglePause() {
     const isGameRunning = this._gameInterval > 0;
 
