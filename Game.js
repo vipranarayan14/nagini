@@ -1,16 +1,41 @@
-import * as config from "./config.js";
+const canReset = () =>
+  window.confirm(
+    "Are you sure you want to reset the game?" + "\n" + "This can't be undone."
+  );
 
 export class Game {
   constructor() {
     this._gameInterval = 0;
+    this.draw = () => {};
+    this.reset = () => {};
   }
 
-  start(draw) {
-    this._gameInterval = setInterval(draw, config.GAME_SPEED.NORMAL);
+  resetInterval() {
+    clearInterval(this._gameInterval);
+    this._gameInterval = 0;
+  }
+
+  init(draw, gameSpeed) {
+    this.draw = draw;
+    this.gameSpeed = gameSpeed;
+    this.draw();
+  }
+
+  setReset(reset) {
+    this.reset = () => {
+      if (!canReset()) return;
+      this.resetInterval();
+      reset();
+      this.draw();
+    };
+  }
+
+  start() {
+    this._gameInterval = setInterval(this.draw, this.gameSpeed);
   }
 
   pause() {
-    clearInterval(this._gameInterval);
+    this.resetInterval();
   }
 
   togglePause() {
@@ -18,7 +43,6 @@ export class Game {
 
     if (isGameRunning) {
       this.pause();
-      this._gameInterval = 0;
     } else {
       this.start();
     }

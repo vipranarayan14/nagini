@@ -9,6 +9,7 @@ export class Scoreboard extends Board {
   }
 
   addScore = () => (this.score += config.SCORE_INCREMENT);
+  resetScore = () => (this.score = 0);
 
   drawScore(ctx) {
     ctx.fillStyle = "white";

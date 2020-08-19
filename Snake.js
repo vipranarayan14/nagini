@@ -13,11 +13,13 @@ export class Snake extends Block {
     this._dx = config.BLOCK_SIZE;
     this._dy = 0;
 
-    this._parts = [
+    this._initialParts = [
       { x: config.BLOCK_SIZE * 2, y: this._gameboard.middle },
       { x: config.BLOCK_SIZE * 1, y: this._gameboard.middle },
       { x: config.BLOCK_SIZE * 0, y: this._gameboard.middle },
     ];
+
+    this._parts = this._initialParts;
   }
 
   draw(ctx) {
@@ -26,6 +28,10 @@ export class Snake extends Block {
       this.y = y;
       super.draw(ctx);
     });
+  }
+
+  reset() {
+    this._parts = this._initialParts;
   }
 
   get isGoingUp() {
