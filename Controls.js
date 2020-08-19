@@ -1,7 +1,7 @@
 import { Board } from "./Board.js";
 import { createControlButtons } from "./ControlButton.js";
 
-const toggleCanvasFullscreen = (canvas) =>
+const toggleCanvasFullscreen = () =>
   document.fullscreenElement
     ? document.exitFullscreen()
     : document.documentElement.requestFullscreen();
@@ -15,7 +15,7 @@ export class Controls extends Board {
     const buttons = [
       { color: "yellow", onClick: () => game.togglePause() },
       { color: "pink", onClick: () => game.reset() },
-      { color: "white", onClick: () => toggleCanvasFullscreen(canvas) },
+      { color: "white", onClick: () => toggleCanvasFullscreen() },
     ];
 
     this.controlButtons = createControlButtons(
