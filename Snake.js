@@ -67,22 +67,37 @@ export class Snake extends Block {
     this._parts = [{ x, y }].concat(this._parts);
   }
 
+  onEdge() {
+    return (
+      this._parts[0].x === this._gameboard.width ||
+      this._parts[0].y === this._gameboard.height
+    );
+  }
+
   turnUp() {
+    if (this.onEdge()) return;
+
     this._dy = -config.BLOCK_SIZE;
     this._dx = 0;
   }
 
   turnDown() {
+    if (this.onEdge()) return;
+
     this._dy = config.BLOCK_SIZE;
     this._dx = 0;
   }
 
   turnLeft() {
+    if (this.onEdge()) return;
+
     this._dy = 0;
     this._dx = -config.BLOCK_SIZE;
   }
 
   turnRight() {
+    if (this.onEdge()) return;
+
     this._dy = 0;
     this._dx = config.BLOCK_SIZE;
   }
