@@ -24,11 +24,11 @@ export class Controls extends Board {
     this.x = canvas.width / 2;
 
     const buttons = [
+      { color: "cyan", onClick: () => game.togglePause() },
       {
-        color: "cyan",
+        color: "yellow",
         onClick: () => game.setSpeed(toggleGameSpeed(game.speed)),
       },
-      { color: "yellow", onClick: () => game.togglePause() },
       { color: "pink", onClick: () => game.reset() },
       { color: "white", onClick: () => toggleCanvasFullscreen() },
     ];
