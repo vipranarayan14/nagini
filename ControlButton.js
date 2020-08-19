@@ -12,7 +12,8 @@ export const createControlButtons = (canvas, parentBlock) => (buttons) =>
 
         this.x =
           parentBlock.x + parentBlock.width - buttonOrder * (BLOCK_SIZE + 10);
-        this.y = parentBlock.y + 20;
+        this.y = parentBlock.y + 22;
+        this.height = this.width = 35;
         this.fillColor = button.color;
         this.borderColor = button.color;
 
